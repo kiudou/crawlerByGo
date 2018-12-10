@@ -10,7 +10,7 @@ func Run(seeds ...Request)  {
 	for _, r := range seeds {
 		requests = append(requests, r)
 	}
-	for len(requests) > 0 {
+	for len(requests) > 0 { //任务队列
 		r := requests[0]
 		requests = requests[1:]
 

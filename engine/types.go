@@ -2,7 +2,7 @@ package engine
 
 type Request struct {
 	Url string
-	ParserFunc func([]byte) ParseResult
+	ParserFunc func([]byte) ParseResult //对于相对应的Url，要执行的具体函数
 }
 
 type ParseResult struct {
