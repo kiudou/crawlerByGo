@@ -10,6 +10,7 @@ import (
 	"golang.org/x/net/html/charset"
 	"log"
 	"golang.org/x/text/encoding/unicode"
+	"time"
 )
 
 //判断爬取的网页是什么类型，从而转成utf8
@@ -23,8 +24,10 @@ func determineEncoding(r *bufio.Reader) encoding.Encoding {
 	return e
 }
 
-func Fetch(url string) ([]byte, error){
+var rateLimiter = time.Tick(10*time.Millisecond)
 
+func Fetch(url string) ([]byte, error){
+	<-rateLimiter
 	client := &http.Client{}
 	req, err := http.NewRequest("GET", url, nil)
 	if err != nil {
