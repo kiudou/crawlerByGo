@@ -5,6 +5,7 @@ import "log"
 type ConcurrentEngine struct {
 	Scheduler Scheduler
 	WorkerCount int
+	ItemChan chan Item
 }
 
 type Scheduler interface {
@@ -34,6 +35,7 @@ func (e *ConcurrentEngine) Run(seeds ...Request) {
 	for {
 		result := <- out
 		for _, item := range result.Items {
+			go func() {e.ItemChan <- item}()
 			log.Printf("Got %d item : %v", itemCount ,item)
 		}
 		itemCount++

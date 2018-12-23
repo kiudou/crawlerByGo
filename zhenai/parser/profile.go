@@ -8,7 +8,9 @@ import (
 )
 
 var re = regexp.MustCompile(`<div class="m-btn purple" data-v-bff6f798>([^<]+)</div><div class="m-btn purple" data-v-bff6f798>([^<]+)</div><div class="m-btn purple" data-v-bff6f798>([^<]+)</div><div class="m-btn purple" data-v-bff6f798>([^<]+)</div><div class="m-btn purple" data-v-bff6f798>([^<]+)</div><div class="m-btn purple" data-v-bff6f798>([^<]+)</div><div class="m-btn purple" data-v-bff6f798>([^<]+)</div>`)
-func ParseProfile(contents []byte, name string) engine.ParseResult {
+var idUrlRe = regexp.MustCompile(`http://album.zhenai.com/u/([\d]+)`)
+
+func ParseProfile(contents []byte, name string, url string) engine.ParseResult {
 	profile := model.Profile{}
 	matches := re.FindSubmatch(contents)
 	//log.Printf("matches :%s\n",matches)
@@ -25,7 +27,24 @@ func ParseProfile(contents []byte, name string) engine.ParseResult {
 
 
 	result := engine.ParseResult{
-		Items: []interface{}{profile},
+		Items: []engine.Item{
+			{
+				Url: url,
+				Type: "zhenai",
+				Id: extractString([]byte(url), idUrlRe),
+				Payload: profile,
+			},
+
+		},
 	}
 	return result
+}
+func extractString(contents []byte, re *regexp.Regexp) string {
+	match := re.FindSubmatch(contents)
+
+	if len(match) >= 2 {
+		return string(match[1])
+	} else {
+		return ""
+	}
 }
